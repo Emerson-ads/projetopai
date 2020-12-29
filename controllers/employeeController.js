@@ -1,6 +1,7 @@
 const express = require ('express')
-
 let router = express.Router()
+const mongoose = require ('mongoose')
+const Employee = mongoose.model('employee');
 
 router.get('/', (req,res)=>{
     res.render('employee/addOrEdit.hbs', {
@@ -14,8 +15,8 @@ router.post('/', (req, res)=>{
 
 function insertRecord (req,res){
     let employee = new Employee();
-    employee.fullname = req.body.fullname;
-    employee.value = req.body.value;
+    employee.fullname = req.body.fullName;
+    employee.valor = req.body.fullValor;
     employee.save((err,doc)=>{
         if (!err){
             res.redirect('employee/list')
@@ -26,6 +27,14 @@ function insertRecord (req,res){
 }
 
 router.get('/list', (req, res)=> {
-    res.json('from List')
+    Employee.find((err, docs) => {
+        if(!err){
+            res.render("employee/list", {
+                list: docs
+            });
+        }else {
+            console.log('Error in retrieving employee list :' + err);
+        };
+    });
 })
 module.exports = router;
